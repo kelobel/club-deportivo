@@ -1,0 +1,154 @@
+INFORME DE PROYECTO - SISTEMA DE GESTIÓN CLUB DEPORTIVO
+METODOLOGÍA SCRUM
+
+1. PORTADA
+Proyecto: Sistema de Gestión para Club Deportivo
+Curso: Desarrollo de Software con Metodologías Ágiles
+Fecha: Diciembre 2024
+Integrantes del Equipo Scrum
+
+2. INTRODUCCIÓN
+
+• Descripción del producto:
+Sistema web integral para la gestión de un club deportivo que permite el control de membresías, asistencia mediante códigos QR, gestión de invitados, control de pagos y estadísticas en tiempo real.
+
+• Problema que resuelve:
+Los clubes deportivos tradicionalmente manejan el control de acceso, membresías y pagos de forma manual o con sistemas desactualizados, generando ineficiencias, errores en el control de asistencia y dificultades para el seguimiento de pagos y estadísticas.
+
+• Público objetivo:
+Administradores de clubes deportivos, personal de recepción y miembros del club que necesitan un sistema moderno y eficiente para gestionar todas las operaciones del club.
+
+• Objetivo general:
+Desarrollar un sistema web completo que digitalice y automatice la gestión de un club deportivo, mejorando la experiencia tanto para administradores como para miembros.
+
+3. MARCO METODOLÓGICO
+
+• Metodología Scrum:
+Scrum es un marco de trabajo ágil que permite desarrollar productos complejos de manera iterativa e incremental. Se basa en tres roles principales (Product Owner, Scrum Master, Development Team), eventos (Sprint Planning, Daily Scrum, Sprint Review, Sprint Retrospective) y artefactos (Product Backlog, Sprint Backlog, Incremento).
+
+• Herramientas utilizadas:
+- Desarrollo: Next.js, React, TypeScript, Tailwind CSS
+- Control de versiones: Git/GitHub
+- Gestión de proyecto: Trello/ClickUp
+- Comunicación: WhatsApp/Discord
+- Diseño: v0.dev, Figma
+
+• Sprints ejecutados: 4 sprints de 1 semana cada uno
+
+4. CONFORMACIÓN DEL EQUIPO SCRUM
+
+• Product Owner: [Nombre]
+Responsabilidades: Definir los requisitos del sistema, priorizar funcionalidades según las necesidades del club, validar que cada incremento cumpla con las expectativas del negocio, y tomar decisiones sobre el alcance del producto.
+
+• Scrum Master: [Nombre]
+Responsabilidades: Facilitar las ceremonias Scrum, eliminar impedimentos del equipo, asegurar que se sigan las prácticas ágiles, y apoyar al equipo en la mejora continua del proceso de desarrollo.
+
+• Development Team: 3-4 integrantes
+- Frontend Developer: Especializado en React/Next.js, responsable de la interfaz de usuario y experiencia del usuario
+- Backend Developer: Encargado de la lógica de negocio, APIs y gestión de datos
+- UI/UX Designer: Diseño de interfaces, prototipado y experiencia de usuario
+- QA Tester: Pruebas funcionales, validación de requisitos y control de calidad
+
+Cada miembro contribuyó con sus especialidades técnicas y participó activamente en todas las ceremonias Scrum, manteniendo comunicación constante y colaboración efectiva.
+
+5. PLANIFICACIÓN INICIAL
+
+• Product Backlog:
+Se construyó identificando las necesidades principales del club deportivo:
+1. Gestión de miembros (registro, edición, eliminación)
+2. Sistema de códigos QR para control de acceso
+3. Registro de asistencia y acompañantes
+4. Gestión de invitados temporales
+5. Control de pagos y mensualidades
+6. Dashboard con estadísticas
+7. Historial de asistencia por miembro
+
+Priorización basada en valor de negocio y dependencias técnicas.
+
+• Definition of Done:
+- Funcionalidad completamente implementada
+- Código revisado por al menos un compañero
+- Pruebas unitarias y de integración pasando
+- Interfaz responsive y accesible
+- Documentación actualizada
+- Validación del Product Owner
+
+• Estimación de tareas:
+Utilizamos Planning Poker con Story Points (escala Fibonacci: 1, 2, 3, 5, 8, 13) considerando complejidad, esfuerzo y riesgo.
+
+6. SPRINTS
+
+SPRINT 1 (Semana 1):
+• Objetivos: Configuración inicial del proyecto y funcionalidades básicas de gestión de miembros
+• Historias de usuario: Registro de miembros, lista de miembros, validación de formularios
+• Duración: 1 semana
+• Tareas principales: Setup del proyecto Next.js, diseño de base de datos, componentes básicos
+• Obstáculos: Configuración inicial de TypeScript - Resuelto con documentación oficial
+
+SPRINT 2 (Semana 2):
+• Objetivos: Sistema de códigos QR y control de acceso
+• Historias de usuario: Generación de QR, escáner QR, registro de asistencia
+• Duración: 1 semana
+• Tareas principales: Implementación de QR generator, QR scanner, localStorage para persistencia
+• Obstáculos: Integración de cámara web - Resuelto con getUserMedia API
+
+SPRINT 3 (Semana 3):
+• Objetivos: Gestión de invitados y dashboard administrativo
+• Historias de usuario: Registro de invitados, dashboard con estadísticas, gestión de acompañantes
+• Duración: 1 semana
+• Tareas principales: Componentes de invitados, cálculos estadísticos, gráficos
+• Obstáculos: Cálculos complejos de estadísticas - Resuelto con funciones utilitarias
+
+SPRINT 4 (Semana 4):
+• Objetivos: Sistema de pagos y refinamientos finales
+• Historias de usuario: Gestión de mensualidades, cargos adicionales, mejoras UX
+• Duración: 1 semana
+• Tareas principales: Sistema de pagos, validaciones, pulimiento de UI
+• Obstáculos: Lógica compleja de cargos - Resuelto con refactoring de funciones
+
+8. REVISIÓN Y ENTREGABLES
+
+• Demo del producto: [Enlace al video de demostración]
+• Capturas del producto final:
+- Dashboard administrativo con estadísticas en tiempo real
+- Sistema de gestión de miembros con códigos QR
+- Interfaz de escáner QR para control de acceso
+- Panel de gestión de invitados y acompañantes
+- Sistema de control de pagos y mensualidades
+
+• Cambios solicitados por el Product Owner:
+- Mejora en la validación de números telefónicos
+- Agregado de funcionalidad de eliminación en cascada
+- Optimización de la interfaz móvil
+
+• Mejoras realizadas:
+- Implementación de diseño responsive
+- Validaciones robustas en formularios
+- Manejo de errores mejorado
+- Optimización de rendimiento
+
+• Casos de pruebas:
+- Registro y gestión de miembros
+- Generación y escaneo de códigos QR
+- Cálculo correcto de estadísticas
+- Funcionalidad de pagos y cargos
+- Responsividad en diferentes dispositivos
+
+9. RETROSPECTIVA
+
+• Qué funcionó bien:
+- Comunicación efectiva del equipo
+- Entregas incrementales constantes
+- Uso efectivo de herramientas de desarrollo modernas
+- Adaptabilidad a cambios de requisitos
+
+• Qué se puede mejorar:
+- Planificación más detallada de estimaciones
+- Implementación de pruebas automatizadas desde el inicio
+- Mejor documentación técnica durante el desarrollo
+
+• Acciones para próximos proyectos:
+- Implementar CI/CD desde el primer sprint
+- Dedicar más tiempo a la arquitectura inicial
+- Incluir pruebas de usabilidad con usuarios reales
+- Establecer métricas de rendimiento desde el inicio
