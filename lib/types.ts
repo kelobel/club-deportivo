@@ -21,8 +21,10 @@ export interface AttendanceRecord {
   memberName?: string
   facility: Facility
   entryTime: Date
+  exitTime?: Date
   date: string // YYYY-MM-DD format
   companions?: string[]
+  type: 'entry' | 'exit'
 }
 
 export interface GuestRecord {

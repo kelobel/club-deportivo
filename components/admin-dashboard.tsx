@@ -363,12 +363,23 @@ export function AdminDashboard({ onNavigateToSection }: AdminDashboardProps) {
                     )}
 
                     <div>
-                      <p className="font-medium">
-                        {activity.memberName} <Badge variant="secondary">#{activity.membershipNumber}</Badge>
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium">
+                          {activity.memberName} <Badge variant="secondary">#{activity.membershipNumber}</Badge>
+                        </p>
+                        {activity.type === "attendance" && (
+                          <Badge className={`text-xs ${
+                            activity.entryType === 'entry' 
+                              ? 'bg-green-100 text-green-800 border-green-300' 
+                              : 'bg-red-100 text-red-800 border-red-300'
+                          }`}>
+                            {activity.entryType === 'entry' ? '📥' : '📤'}
+                          </Badge>
+                        )}
+                      </div>
                       <p className="text-sm text-muted-foreground">
                         {activity.type === "attendance" ? (
-                          <>Ingresó a {activity.facility}</>
+                          <>{activity.entryType === 'entry' ? 'Ingresó a' : 'Salió de'} {activity.facility}</>
                         ) : (
                           <>
                             Registró invitado: {activity.guestName}

@@ -72,6 +72,7 @@ export const getRecentActivity = (limit = 10) => {
     guestName?: string
     time: Date
     additionalCharge?: number
+    entryType?: 'entry' | 'exit'
   }> = []
 
   // Add attendance records
@@ -84,7 +85,8 @@ export const getRecentActivity = (limit = 10) => {
         memberName: `${member.firstName} ${member.lastName}`,
         membershipNumber: record.membershipNumber,
         facility: record.facility,
-        time: new Date(record.entryTime),
+        time: new Date(record.type === 'entry' ? record.entryTime : (record.exitTime || record.entryTime)),
+        entryType: record.type,
       })
     }
   })

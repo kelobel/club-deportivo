@@ -19,7 +19,11 @@ export function AttendanceHistory() {
     const membersList = getMembers()
 
     // Sort by most recent first
-    const sortedRecords = records.sort((a, b) => new Date(b.entryTime).getTime() - new Date(a.entryTime).getTime())
+    const sortedRecords = records.sort((a, b) => {
+      const timeA = a.type === 'entry' ? new Date(a.entryTime).getTime() : new Date(a.exitTime || a.entryTime).getTime()
+      const timeB = b.type === 'entry' ? new Date(b.entryTime).getTime() : new Date(b.exitTime || b.entryTime).getTime()
+      return timeB - timeA
+    })
 
     setAttendanceRecords(sortedRecords)
     setMembers(membersList)
@@ -106,14 +110,22 @@ export function AttendanceHistory() {
                       <MapPin className="h-3 w-3" />
                       {record.facility}
                     </Badge>
+                    <Badge className={`flex items-center gap-1 ${
+                      record.type === 'entry' 
+                        ? 'bg-green-100 text-green-800 border-green-300' 
+                        : 'bg-red-100 text-red-800 border-red-300'
+                    }`}>
+                      {record.type === 'entry' ? '📥 Entrada' : '📤 Salida'}
+                    </Badge>
                   </div>
 
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      {formatTime(record.entryTime)}
+                      {record.type === 'entry' ? 'Entrada: ' : 'Salida: '}
+                      {formatTime(record.type === 'entry' ? record.entryTime : (record.exitTime || record.entryTime))}
                     </div>
-                    <span>{formatDate(record.entryTime)}</span>
+                    <span>{formatDate(record.type === 'entry' ? record.entryTime : (record.exitTime || record.entryTime))}</span>
                   </div>
                 </div>
               </div>

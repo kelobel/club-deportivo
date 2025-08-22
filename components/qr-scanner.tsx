@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { User } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import type { Facility } from "@/lib/types"
-import { findMemberByMembershipNumber, saveAttendanceRecord } from "@/lib/storage"
+import { findMemberByMembershipNumber, saveAttendanceRecord, getMemberCurrentStatus } from "@/lib/storage"
 import { useAuth } from "@/hooks/use-auth"
 
 const FACILITIES: Facility[] = [
@@ -80,14 +80,24 @@ export function QRScanner({ onScanSuccess }: QRScannerProps) {
       facility: selectedFacility as Facility,
       entryTime: new Date(),
       date: new Date().toISOString().split("T")[0],
+      type: 'entry' as const,
     }
 
     try {
-      saveAttendanceRecord(attendanceRecord)
-
+      // Check current status before registering
+      const currentStatus = getMemberCurrentStatus(member.id, selectedFacility as Facility)
+      const willBeEntry = currentStatus === 'outside'
+      
+      const result = saveAttendanceRecord(attendanceRecord)
+      
+      const isEntry = result.type === 'entry'
+      const actionText = isEntry ? "Entrada registrada" : "Salida registrada"
+      const emoji = isEntry ? "📥" : "�"
+      const statusText = isEntry ? "Ahora está DENTRO" : "Ahora está FUERA"
+      
       toast({
-        title: "✅ Entrada registrada",
-        description: `${member.firstName} ${member.lastName} - ${selectedFacility}`,
+        title: `${emoji} ${actionText}`,
+        description: `${member.firstName} ${member.lastName} - ${selectedFacility}. ${statusText}`,
       })
 
       onScanSuccess?.(membershipNumber, selectedFacility as Facility)

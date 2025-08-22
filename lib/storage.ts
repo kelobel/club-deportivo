@@ -1,4 +1,4 @@
-import type { Member, AttendanceRecord, GuestRecord, AdditionalCharge } from "./types"
+import type { Member, AttendanceRecord, GuestRecord, AdditionalCharge, Facility } from "./types"
 
 const STORAGE_KEYS = {
   MEMBERS: "club_members",
@@ -53,27 +53,107 @@ export const generateMembershipNumber = (): string => {
 
 // Attendance management
 export const getAttendanceRecords = (): AttendanceRecord[] => {
-  if (typeof window === "undefined") return []
-  const stored = localStorage.getItem(STORAGE_KEYS.ATTENDANCE)
-  return stored
-    ? JSON.parse(stored).map((record: any) => ({
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.ATTENDANCE)
+    return stored
+      ? JSON.parse(stored).map((record: any) => ({
         ...record,
         entryTime: new Date(record.entryTime),
+        exitTime: record.exitTime ? new Date(record.exitTime) : undefined,
       }))
-    : []
+      : []
+  } catch (error) {
+    console.error("Error parsing attendance records:", error)
+    return []
+  }
 }
 
-export const saveAttendanceRecord = (record: AttendanceRecord): void => {
+export const saveAttendanceRecord = (record: AttendanceRecord): { type: 'entry' | 'exit', record: AttendanceRecord } => {
   const records = getAttendanceRecords()
-  // Asegurar que entryTime sea una fecha válida antes de guardar
-  const recordToSave = {
-    ...record,
-    entryTime: record.entryTime instanceof Date ? record.entryTime.toISOString() : record.entryTime,
+  const today = record.date
+  
+  // Buscar si el usuario ya tiene una entrada activa (sin salida correspondiente) en la misma facilidad el mismo día
+  const hasActiveEntry = records.some(r => 
+    r.memberId === record.memberId && 
+    r.facility === record.facility && 
+    r.date === today && 
+    r.type === 'entry' &&
+    !records.some(exitRecord => 
+      exitRecord.memberId === record.memberId &&
+      exitRecord.facility === record.facility &&
+      exitRecord.date === today &&
+      exitRecord.type === 'exit' &&
+      new Date(exitRecord.entryTime) > new Date(r.entryTime)
+    )
+  )
+  
+  let recordToSave: AttendanceRecord
+  let actionType: 'entry' | 'exit'
+  
+  if (hasActiveEntry) {
+    // Ya existe una entrada activa, crear un nuevo registro de salida
+    recordToSave = {
+      id: crypto.randomUUID(),
+      memberId: record.memberId,
+      membershipNumber: record.membershipNumber,
+      memberName: record.memberName,
+      facility: record.facility,
+      entryTime: record.entryTime instanceof Date ? record.entryTime : new Date(record.entryTime),
+      date: record.date,
+      type: 'exit',
+      companions: record.companions
+    }
+    actionType = 'exit'
+  } else {
+    // No hay entrada activa, crear un nuevo registro de entrada
+    recordToSave = {
+      ...record,
+      entryTime: record.entryTime instanceof Date ? record.entryTime : new Date(record.entryTime),
+      type: 'entry',
+      exitTime: undefined
+    }
+    actionType = 'entry'
   }
+  
+  // Agregar el nuevo registro a la lista
   records.push(recordToSave)
+  
+  // Guardar en localStorage
+  const recordsToStore = records.map(r => ({
+    ...r,
+    entryTime: r.entryTime instanceof Date ? r.entryTime.toISOString() : r.entryTime,
+    exitTime: r.exitTime && r.exitTime instanceof Date ? r.exitTime.toISOString() : r.exitTime,
+  }))
+  
   console.log("Saving attendance record to localStorage:", recordToSave)
+  console.log("Action type:", actionType)
   console.log("Total records after save:", records.length)
-  localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify(records))
+  localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify(recordsToStore))
+  
+  return { type: actionType, record: recordToSave }
+}
+
+// Function to check if a member is currently inside a facility
+export const getMemberCurrentStatus = (memberId: string, facility: Facility): 'inside' | 'outside' => {
+  const records = getAttendanceRecords()
+  const today = new Date().toISOString().split("T")[0]
+  
+  // Obtener todos los registros del miembro en esa facilidad hoy, ordenados por tiempo
+  const memberFacilityRecords = records
+    .filter(r => 
+      r.memberId === memberId && 
+      r.facility === facility && 
+      r.date === today
+    )
+    .sort((a, b) => new Date(a.entryTime).getTime() - new Date(b.entryTime).getTime())
+  
+  if (memberFacilityRecords.length === 0) {
+    return 'outside'
+  }
+  
+  // El último registro determina el estado actual
+  const latestRecord = memberFacilityRecords[memberFacilityRecords.length - 1]
+  return latestRecord.type === 'entry' ? 'inside' : 'outside'
 }
 
 // Guest management

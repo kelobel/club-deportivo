@@ -25,6 +25,7 @@ import {
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, LineChart, Line, ResponsiveContainer } from "recharts"
 import type { Member, AttendanceRecord } from "@/lib/types"
+import { QRGenerator } from "@/components/qr-generator"
 import {
   calculateMemberStats,
   getDateRangePresets,
@@ -82,6 +83,7 @@ export function MemberDashboard() {
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear())
   const [calendarData, setCalendarData] = useState<any[]>([])
   const [selectedDayDetails, setSelectedDayDetails] = useState<any>(null)
+  const [showQRCode, setShowQRCode] = useState(false)
 
   const datePresets = getDateRangePresets()
 
@@ -500,11 +502,19 @@ export function MemberDashboard() {
                       key={index}
                       className="flex justify-between items-center p-3 bg-blue-100 rounded border border-blue-200"
                     >
-                      <div>
-                        <span className="text-blue-700 font-medium">{record.facility}</span>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-blue-700 font-medium">{record.facility}</span>
+                          <span className={`text-xs px-2 py-1 rounded ${
+                            record.type === 'entry' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}>
+                            {record.type === 'entry' ? '📥 Entrada' : '📤 Salida'}
+                          </span>
+                        </div>
                         <div className="text-sm text-blue-600 flex items-center gap-1 mt-1">
                           <Clock className="h-3 w-3" />
-                          {new Date(record.entryTime || record.timestamp).toLocaleTimeString("es-ES", {
+                          {record.type === 'entry' ? 'Entrada: ' : 'Salida: '}
+                          {new Date(record.type === 'entry' ? record.entryTime : (record.exitTime || record.entryTime)).toLocaleTimeString("es-ES", {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}
@@ -901,12 +911,19 @@ export function MemberDashboard() {
             <CardDescription>Usa este código para registrar tu asistencia</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <div className="inline-block bg-green-100 border-2 border-green-300 rounded-lg p-6">
-                <p className="text-3xl font-mono font-bold text-green-800">{memberData.membershipNumber}</p>
+            {showQRCode ? (
+              <QRGenerator member={memberData} onBack={() => setShowQRCode(false)} />
+            ) : (
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="inline-block bg-green-100 border-2 border-green-300 rounded-lg p-6">
+                  <p className="text-3xl font-mono font-bold text-green-800">{memberData.membershipNumber}</p>
+                </div>
+                <p className="text-sm text-muted-foreground text-center">Presenta este código al registrar en el club</p>
+                <Button onClick={() => setShowQRCode(true)} className="bg-green-600 hover:bg-green-700">
+                  Ver Código QR
+                </Button>
               </div>
-              <p className="text-sm text-muted-foreground text-center">Presenta este código al registrar en el club</p>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>
