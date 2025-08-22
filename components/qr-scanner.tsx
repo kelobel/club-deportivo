@@ -20,6 +20,7 @@ const FACILITIES: Facility[] = [
   "Cafetería",
   "Sauna",
   "Área de spinning",
+  "Puerta Principal",
 ]
 
 interface QRScannerProps {

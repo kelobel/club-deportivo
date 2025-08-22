@@ -53,6 +53,7 @@ export type Facility =
   | "Cafetería"
   | "Sauna"
   | "Área de spinning"
+  | "Puerta Principal"
 
 export interface FacilityStats {
   facility: Facility

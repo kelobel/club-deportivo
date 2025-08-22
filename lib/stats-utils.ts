@@ -1,5 +1,5 @@
-import type { MemberStats, FacilityStats, Facility } from "./types"
-import { getAttendanceRecords, getMembers } from "./storage"
+import type { MemberStats, FacilityStats, Facility, GuestRecord } from "./types"
+import { getAttendanceRecords, getMembers, getGuestRecords } from "./storage"
 
 export const calculateMemberStats = (memberId: string, startDate?: Date, endDate?: Date): MemberStats | null => {
   const members = getMembers()
@@ -264,6 +264,7 @@ export const getTodayStats = (memberId?: string) => {
 
 export const getCalendarData = (memberId: string, year: number, month: number) => {
   const attendanceRecords = getAttendanceRecords()
+  const guestRecords = getGuestRecords()
   const memberRecords = attendanceRecords.filter((record) => record.memberId === memberId)
 
   const startDate = new Date(year, month, 1)
@@ -274,21 +275,45 @@ export const getCalendarData = (memberId: string, year: number, month: number) =
     return recordDate >= startDate && recordDate <= endDate
   })
 
-  const dailyData = new Map<string, any[]>()
+  // Filter guest records for the same period and member
+  const monthGuestRecords = guestRecords.filter((record: GuestRecord) => {
+    const recordDate = new Date(record.date)
+    return record.memberId === memberId && recordDate >= startDate && recordDate <= endDate
+  })
 
+  const dailyData = new Map<string, any>()
+
+  // Process attendance records
   monthRecords.forEach((record) => {
     const dateKey = record.date
     if (!dailyData.has(dateKey)) {
-      dailyData.set(dateKey, [])
+      dailyData.set(dateKey, {
+        attendanceRecords: [],
+        guestRecords: []
+      })
     }
-    dailyData.get(dateKey)!.push(record)
+    dailyData.get(dateKey)!.attendanceRecords.push(record)
   })
 
-  return Array.from(dailyData.entries()).map(([date, records]) => ({
+  // Process guest records
+  monthGuestRecords.forEach((record: GuestRecord) => {
+    const dateKey = record.date
+    if (!dailyData.has(dateKey)) {
+      dailyData.set(dateKey, {
+        attendanceRecords: [],
+        guestRecords: []
+      })
+    }
+    dailyData.get(dateKey)!.guestRecords.push(record)
+  })
+
+  return Array.from(dailyData.entries()).map(([date, data]) => ({
     date,
-    visits: records.length,
-    facilities: [...new Set(records.map((r) => r.facility))],
-    companions: records.flatMap((r) => r.companions || []),
-    records,
+    visits: data.attendanceRecords.length,
+    facilities: [...new Set(data.attendanceRecords.map((r: any) => r.facility))],
+    companions: data.attendanceRecords.flatMap((r: any) => r.companions || []),
+    guests: data.guestRecords.map((g: any) => g.guestName),
+    records: data.attendanceRecords,
+    guestRecords: data.guestRecords,
   }))
 }

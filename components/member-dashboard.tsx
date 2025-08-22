@@ -456,6 +456,13 @@ export function MemberDashboard() {
                             <Users className="h-3 w-3 text-green-600" />
                           </div>
                         )}
+                        {Array.isArray(dayData.guests) && dayData.guests.length > 0 && (
+                          <div className="absolute top-1 left-1">
+                            <Badge variant="outline" className="text-xs bg-yellow-100 text-yellow-800 border-yellow-300">
+                              {dayData.guests.length}
+                            </Badge>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -519,6 +526,21 @@ export function MemberDashboard() {
                       </span>
                     </div>
                     <div className="text-sm text-blue-600">{selectedDayDetails.companions.join(", ")}</div>
+                  </div>
+                </div>
+              )}
+
+              {Array.isArray(selectedDayDetails.guests) && selectedDayDetails.guests.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-blue-800 mb-3">Invitados del Día</h4>
+                  <div className="p-3 bg-green-100 rounded border border-green-200">
+                    <div className="flex items-center justify-between text-sm mb-2">
+                      <span className="text-green-700">
+                        {selectedDayDetails.guests.length} invitado
+                        {selectedDayDetails.guests.length !== 1 ? "s" : ""}
+                      </span>
+                    </div>
+                    <div className="text-sm text-green-600">{selectedDayDetails.guests.join(", ")}</div>
                   </div>
                 </div>
               )}
